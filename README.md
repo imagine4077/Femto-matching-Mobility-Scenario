@@ -26,8 +26,8 @@ Femto-matching is a offloading algorithm that proposed by Pro. Wei Wang et al.(N
 
 1. 每移动一步,查看系统中各用户情况,选出如下情况用户:
 
-	a. 无连接用户
-	b. 走出原基站覆盖范围的用户
+		a. 无连接用户
+		b. 走出原基站覆盖范围的用户
 
 将此两类用户存入“待处理用户集”(代码中命名为 moved_point)。
 
