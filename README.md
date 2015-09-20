@@ -5,7 +5,7 @@ README
 
 Femto-matching is a offloading algorithm that proposed by Pro. Wei Wang et al.(NJU)
 
-Femto-matching algorithm brings us a novel insight by employing auction strategy to achieve offloading. Pro. Wang et al. implemented the algorithm in static scenario. This project focuses on the mobile scenario. We designed new handoff strategy and VBS rebuy strategy to adapt the mobile scenario, and achieves outstanding performance ( compares with College Game[2] and RAT game[3]).
+Femto-matching algorithm brings us a novel insight by employing an auction strategy to achieve offloading. Pro. Wang et al. implemented the algorithm in static scenario. This project focuses on the mobile scenario. We designed new handoff strategies and VBS rebuy strategies to adapt the mobile scenario, and achieves outstanding performance ( compares with College Game[2] and RAT game[3]).
 
 #### Reference
 
