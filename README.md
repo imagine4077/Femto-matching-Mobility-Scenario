@@ -5,11 +5,15 @@ README
 
 Femto-matching is a offloading algorithm that proposed by Pro. Wei Wang et al.(NJU)
 
-Femto-matching algorithm propeses a novel insight by employing auction strategy to achieve offloading. Pro. Wang et al. implemented the algorithm in static scenario. This project focuses on the mobile scenario. We designed new handoff strategy and VBS rebuy strategy to adapt the mobile scenario, and achieves outstanding performance ( compares with College Game and RAT game).
+Femto-matching algorithm brings us a novel insight by employing auction strategy to achieve offloading. Pro. Wang et al. implemented the algorithm in static scenario. This project focuses on the mobile scenario. We designed new handoff strategy and VBS rebuy strategy to adapt the mobile scenario, and achieves outstanding performance ( compares with College Game[2] and RAT game[3]).
 
 #### Reference
 
 **[1]Wang W, Wu X, Xie L, et al. Femto-matching: Efficient traffic offloading in heterogeneous cellular networks[C]//Computer Communications (INFOCOM), 2015 IEEE Conference on. IEEE, 2015: 325-333.**
+
+**[2]Saad W, Han Z, Zheng R, et al. A college admissions game for uplink user association in wireless small cell networks[C]//INFOCOM, 2014 Proceedings IEEE. IEEE, 2014: 1096-1104.**
+
+**[3]Aryafar E, Keshavarz-Haddad A, Wang M, et al. RAT selection games in HetNets[C]//INFOCOM, 2013 Proceedings IEEE. IEEE, 2013: 998-1006.**
 
 
 #### 一、概述
