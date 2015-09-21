@@ -19,33 +19,14 @@ f2uratio = 6;
 
 fieldsize=100;
 flambda=0.004;
-% flambda=0.014; %%%%%%%%%%%%%%%%%%%%%%%%%%% 用于调试
 ulambda=f2uratio * flambda;
 
 [userx_o usery_o]=twodpoisson(ulambda,fieldsize,fieldsize);
 [femtox femtoy]=twodpoisson(flambda,fieldsize,fieldsize);
-% femtox
-% femtoy
-% pause(600)
 direction_o = get_direction(ulambda,fieldsize,fieldsize);
 speed = get_speed(ulambda,fieldsize,fieldsize);
 
 for r=5:15
-% for r=15:15  %%%%%%%%%%%%%%%%%%%%%%%%%% 用于调试
-
-% %以下用于观察动态，可删除
-% fprintf('+++++++++++++++++++++++++++++\n demostrate which algorithm? \n');
-% fprintf('1.Femto-Matching\n2.College\n3.RAT game\nPlease input your choice:');
-% choice = input('');
-% switch choice
-%     case 1
-%         fprintf('Femto-Matching:\n')
-%     case 2
-%         fprintf('College:\n')
-%     case 3
-%         fprintf('RAT Game:\n')
-% end
-% %以上用于观察动态，可删除
 
 x = [x; 10*r];
 counts=[];

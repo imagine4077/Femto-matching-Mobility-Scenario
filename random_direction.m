@@ -10,7 +10,6 @@ Y=usery+speed.*sind(direction);
 direct=direction;
 
 for i=1:1:length(X)
-%   if X(i)>=(fieldsize/2-radius) 
    if X(i)>=fieldsize/2 
        X(i) = fieldsize/2;
        if direct(i)>180
@@ -18,7 +17,6 @@ for i=1:1:length(X)
        else direct(i)<=180
            direct(i) = 180 - direct(i);
        end
-%   elseif X(i)<= -(fieldsize/2-radius)
    elseif X(i)<= -fieldsize/2
        X(i) = -fieldsize/2;
        if direct(i)>180
@@ -36,7 +34,4 @@ for i=1:1:length(X)
        direct(i) = 360 - direct(i);
    end
 end
-
-
-
 end

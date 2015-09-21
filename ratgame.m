@@ -37,34 +37,15 @@ while(asscount>0)
                for i=femtoquota(f)+1:femtouserno(f)
                    user_femto(userid(uindex(i)))=0; %对于前N名之后的，踢出
                end
-%                fprintf('femtouserno(%g)=%g,\tfemtoquota(%g)=%g,\tuser_femto(%g)=%g,\tuser %g,BS%g\n',f,femtouserno(f),f,femtoquota(f),u,user_femto(u),u,f);
-%                pause(1)
                femtouserno(f)=femtoquota(f);
-    %            uindex
-    %                       userid=find(user_femto==f)
-    %            user_rates=rate(f,userid)
             end        
         end
        
     end
         asscount=sum(abs(user_femto-old_userfemto));
         old_userfemto=user_femto;
-%     assignment'
 end
 
-%     for f=1:numfemto
-%         if femtouserno(f)>femtoquota
-%            userid=find(user_femto==f);
-%            user_rates=rate(f,userid);
-%            [result uindex]=sort(user_rates,2,'descend');
-%            for i=femtoquota+1:femtouserno(f)
-%                user_femto(userid(uindex(i)))=0;
-%            end
-% %            uindex
-% %                       userid=find(user_femto==f)
-% %            user_rates=rate(f,userid)
-%         end        
-%     end
 for i=1:numuser
     if user_femto(i)==0
         continue;
@@ -75,6 +56,5 @@ for i=1:numuser
 end
 assignment=user_femto';
 
-%lost=sum( min(dis,[],1)>radius );
 lost=sum(assignment==0);
 end

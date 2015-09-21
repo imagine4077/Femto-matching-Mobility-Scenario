@@ -39,7 +39,5 @@ while(asscount>0)
 %     assignment'
 end
 
-
-%lost=sum( min(dis,[],1)>radius );
 lost=sum(assignment==0);
 end

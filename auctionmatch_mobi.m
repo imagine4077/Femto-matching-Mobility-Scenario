@@ -22,24 +22,14 @@ cost=0;
 lost=0;
 change=1;
 iteration=0;
-%assignment=zeros(numuser,1);%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%1028-23:03µ½´Ë
 assignment = assign_topo;
 price=o_price; % numfemto * f2uratio
 reserve = o_reserve; %¸÷VBSµÄÁ¬½ÓÇé¿ö,numfemto * f2uratio
-% for i=2:f2uratio
-%     price(:,i)=-w*log2((i-1)^(i-1)/i^i);
-% end
-% curprice=zeros(numfemto,1); %´Ë»ùÕ¾µÄµ±Ç°±¨¼Û£¬ÏòÁ¿
-% priceid=ones(numfemto,1);   %´Ë»ùÕ¾±¨¼ÛÅÄÂôµÄÊÇµÚ¼¸¸öVBS
-% [curprice priceid] = min( price , [] , 2 );
-% curprice = curprice .* w;   %%%%%%%%%%%%%
-
 
 %ËÑ¼¯ĞèÒªÇĞ»»µÄÓÃ»§
 [max_rate f_id] = max(rate);
 moved_point = []; %ÓÃÓÚ´æ´¢ÒÆ¶¯ÁËµÄÓÃ»§£¬µÄ±àºÅ(ÒÔ¼°ÎŞÁ¬½ÓÓÃ»§£¬µÄ±àºÅ)
 for i=1:numuser
-%    fprintf('speed(%g)=%g',i,speed(i))
    if speed(i) ~= 0
        if assignment( i ) == 0
            moved_point = [moved_point i];
@@ -51,13 +41,7 @@ for i=1:numuser
            [ tmp_row , tmp_col ] = find( reserve == i );
            reserve( tmp_row , tmp_col ) = 0;
            assignment( i ) = 0;
-%            if max_rate(i) < in_threshold %ÅÅ³ıĞèÒªÇĞ»»µ«Ã»AP¿ÉÊÕËüµÄ
-%                kick_out = kick_out + 1;
-%            else
-%                handoff = handoff + 1;
-%                cascade = cascade -1; %¶ÔÓÚĞèÒªhandoffµÄÓÃ»§£¬µÚÒ»´Î±ä»»BS²»Ëãcascade
-               moved_point = [moved_point i];
-%            end
+           moved_point = [moved_point i];
        end
    else
        if assign_topo(i) == 0
@@ -65,8 +49,6 @@ for i=1:numuser
        end
    end
 end
-% old_assign1 = assign_topo;
-% old_assign2 = old_assign1;
 old_moved_p = moved_point;
 old_reserve = reserve;
 
@@ -116,16 +98,9 @@ while(change==1)
     requestbs=zeros(length(moved_point),1);
     bid=zeros(length(moved_point),1);
     for i=1:length(moved_point)
-  
-% %         if(assignment(i)~=0)
-% %             continue;
-% %         end
         margin=lograte(:,moved_point(i))-curprice;
         if assign_topo(moved_point(i)) ~= 0  %ÈôÖ®Ç°ÓĞÁ¬½Ó£¬ÔòÔÚÔ­Á¬½Ó»ùÕ¾ÏíÊÜ´òÕÛ
-%             margin( assign_topo(moved_point(i)) )
             margin( assign_topo(moved_point(i)) )=lograte( assign_topo(moved_point(i)) ,moved_point(i)) - discount*curprice( assign_topo(moved_point(i)) );
-%             margin( assign_topo(moved_point(i)) )
-%             pause(1)
         end
         [ maxmargin requestbs(i)]=max(margin);
         if(maxmargin<=0)
@@ -136,18 +111,9 @@ while(change==1)
     
 
         [secondmargin id ]=max(margin);
-%         bid(i)=maxmargin-secondmargin;
         bid(i)=maxmargin-secondmargin ; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ´Ë´¦¶ÔbidÓĞµ÷Õû
-%         if(i==69)
-%              bid(i)
-%              requestbs(i)
-%              
-%              rate(requestbs(i),i)
-%         end
         if(bid(i)<=1e-2)
-              %fprintf(1,'bid=0 user %d, %d:%g ,%d: %g\n',i,requestbs(i),maxmargin,id,secondmargin);
               bid(i)=0.5;%rand(1,1);
-              %requestbs(i)=0;
         end
         if(bid(i)<0)
             bid(i)=0;
@@ -163,78 +129,37 @@ while(change==1)
         end
         [maxbid uid]=max(bid(requestid));
         winuser=moved_point(requestid(uid)); %winuserÖ¸ÏòuserµÄÊµ¼ÊID
-        
-%         %´Ë¶Î´úÂëÓÃÓÚdebug£¬²é¿´reserveºÍpriceÖĞ¶ÔÓ¦Óë´Ë»ùÕ¾µÄ·ÖÅäÇé¿ö  %%%%%  %%%%%   %%%%%
-%         tmp_res = reserve(i,:)
-%         tmp_pri = price(i,:)
-%         %½áÊø
-        
-%         if rate( i , winuser ) < (in_threshold+0.2)
-%             continue;
-%         end
 
         if(maxbid==0)
-            %fprintf('bid=0, femto=%d, user=%d, previous=%d\n',i,winuser,reserve(i,priceid(i)));
             maxbid=1;
-            %priceid(i)
         end
         
         assignment(winuser)=i;
-%%%%%%%%%%%% print user behavior below %%%%%%%%%%%%%%
-%         fprintf('Femtomatching:assignment(%g) = %g \n', winuser , i )
-%         if assignment(winuser) ~= old_assign2( winuser ) & old_assign2( winuser )~= 0 & 0 ==length(find(old_moved_p == winuser))
-%             fprintf('Femtomatching:user%g jump from BS %g to BS %g\n',winuser,old_assign2( winuser ),assignment(winuser))
-%         end
-%%%%%%%%%%%% print user behavior above %%%%%%%%%%%%%%
         win_list = [win_list winuser];
         if(reserve(i,priceid(i))~=0) %assigned
             assignment(reserve(i,priceid(i)))=0;
-%%%%%%%%%%%% print user behavior below %%%%%%%%%%%%%%
-%             fprintf('Femtomatching:%g was kicked out from BS %g ,VBS %g \n',reserve(i,priceid(i)),i,priceid(i));
-%%%%%%%%%%%% print user behavior above %%%%%%%%%%%%%%
             moved_point = [moved_point reserve(i,priceid(i))];
         end
-        
-%%        % used for checking bugs below %ÒÔÏÂÓÃÓÚ´íÎó¼ì²â
-%         if length( find(reserve == winuser)) ~= 0  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             
-%             find( reserve == winuser )             %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             winuser                                %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             old_assign2(winuser)                   %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             old_assign1(winuser)                   %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             fprint('reserveÎ´ÇåÁã\n')               %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             a = input('press Enter to continue\n');%ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%             
-%             reserve( find(reserve == winuser) ) = 0;%ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%         end                                        %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-%%         % used for checking bugs above %ÒÔÉÏÓÃÓÚ´íÎó¼ì²â
         
         reserve(i,priceid(i))= winuser ;
        if maxbid < 0.3
            maxbid = 0.5;
        end
        price(i,priceid(i))=price(i,priceid(i))+maxbid;
-%        fprintf('price(BS:%g,VBS:%g)=%g\n', i , priceid(i) , price(i,priceid(i)) )  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% print
        [curprice(i) , priceid(i)]=min(price(i,:));%give the smallest price
 
         change=1;
     end
-%%    %delete the assigned used from 'moved_point' %°ÑÒÑ·ÖÅäµÄÓÃ»§´Ómoved_pointÉ¾³ı
     for i=1:length(win_list)
         moved_point( find( moved_point == win_list(i) ) ) = [];
     end
-    
-%     old_assign2 = old_assign1;
-%     old_assign1 = assignment;
 end
 
 lost=length(find(assignment==0));
 
 candidate = setdiff( old_moved_p,moved_point );
 candidate_num = length(candidate);
-% candidate
 
-%ÒÔÏÂÊÇchainµÄ°æ±¾2
 %new femto_quota
 association_stat = (old_reserve ~= 0); %ÇóÆğÊ¼Ê±¸÷VBSµÄÁ¬½Ó×´Ì¬
 femto_quota = sum(association_stat , 2); %Çócandidate×îÖÕÁ¬½ÓµÄ»ùÕ¾ÔÚÆğÊ¼×´Ì¬Ê±Á¬½ÓµÄÓÃ»§¸öÊı
@@ -242,30 +167,14 @@ chains = 0; %¼ÇÂ¼ÕâÑùµÄÓÃ»§¸öÊı£ºÔ­±¾ÎŞÁ¬½Ó£¨»òÒÆ¶¯³öradius£©£¬ÏÖÔÚÍ¨¹ıÌß×ß±ğÈË¶
 for ii=1:length(candidate)
     BS_tmp = assignment(candidate(ii));
     if femto_quota(BS_tmp) >= f2uratio
-%         fprintf('%g starts a chain\n',candidate(ii))
         chains = chains +1;
     else                                                                                              %%% ÓÃÓÚdebug %%%
-%         old_reserve( assignment(candidate(ii)),: )                                                    %%% ÓÃÓÚdebug %%%
-%         fprintf('femto_quota(%g) = %g\n',BS_tmp,femto_quota(ii))                                 %%% ÓÃÓÚdebug %%%
         femto_quota(BS_tmp) = femto_quota(BS_tmp) +1;
     end
 end
 
 cascade = length(setdiff(find((assignment~=assign_topo)==1),old_moved_p ));
-% % cascade1 = cascade_jumpBS + chains;                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% % if (cascade1~=cascade) & (cascade_kicked~=0)                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% %     fprintf('match:kicked user:\n')                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% %     setdiff(moved_point,old_moved_p)                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% %     fprintf('cascade(+chain) = %g,\tcascade(+kick) = %g,chains = %g\n',cascade1,cascade,chains);                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% %     input('match:cascade unequal!!')                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% % end                  %ÓÃÓÚ´íÎó¼ì²â£¬È·ÈÏ×¼È·ºó¿ÉÉ¾³ı
-% fprintf('cascade:%g,\tnew chains:%g\n',cascade,chains);
-% fprintf('auction:iteration:%g,\thandoff:%g,\tkick out:%g,\tass_change:%g\tcascade:%g,\tlost:%g\n\n\n', iteration , handoff , kick_out ,sum(assignment ~= assign_topo), cascade , lost );
-% % pause(1.5);                                                                                   %%% ÓÃÓÚdebug %%%
-% % if (cascade<chains) | (cascade ~=0 & chains == 0)                                                    %%% ÓÃÓÚdebug %%%
-% %     pause(1)
-% % %     input('got!!!!!')                                                                                     %%% ÓÃÓÚdebug %%%
-% % end                                                                                              %%% ÓÃÓÚdebug %%%
+
 if (cascade ~=0 & chains == 0)                                                                                   %%% ÓÃÓÚdebug %%%
     chains = 1;                                                                                     %%% ÓÃÓÚdebug %%%
 end                                                                                              %%% ÓÃÓÚdebug %%%

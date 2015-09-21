@@ -19,7 +19,6 @@ rate=getrate(dis,radius)+epsilon; % 每个用户的 r 100*500
 [max_rate f_id] = max(rate);
 moved_point = []; %用于存储移动了的用户，的编号(以及无连接用户，的编号)
 for i=1:numuser
-%    fprintf('speed(%g)=%g',i,speed(i))
    if speed(i) ~= 0
        if assignment( i ) == 0
            moved_point = [moved_point i];
@@ -31,10 +30,6 @@ for i=1:numuser
            femtoquota(assignment( i )) = femtoquota(assignment( i )) + 1 ;
            assignment( i ) = 0;
            if max_rate(i) > in_threshold
-%            if max_rate(i) < in_threshold %排除需要切换但没AP可收它的
-%                kick_out = kick_out + 1;
-%            else
-%                handoff = handoff + 1;
                moved_point = [moved_point i];
            end
        end
@@ -50,7 +45,6 @@ old_femtoquota = quota - femtoquota; %初始状态下，各个BS服务用户的个数。用于计算
 asscount=1;
 iteration = 0;
 while(asscount>0)
-%     moved_point
     asscount=0;
     iteration = iteration +1;
     %user choose the best femto
@@ -73,51 +67,20 @@ while(asscount>0)
            assignment( moved_point(i) ) = wanted_BS;
            femtoquota(wanted_BS)=femtoquota(wanted_BS)-1;
            push_out = [push_out i];
-%            fprintf('college:user %g assign to BS %g without kick anyone out\n',moved_point(i),wanted_BS);
        else     %无空余挂载位
            fusers=find( assignment == wanted_BS );
-%            fusers             %用于错误检测，确认准确后可删除
-%            wanted_BS             %用于错误检测，确认准确后可删除
-%            dis(wanted_BS,fusers)             %用于错误检测，确认准确后可删除
-%            moved_point(i)             %用于错误检测，确认准确后可删除
-%            dis(wanted_BS,moved_point(i))             %用于错误检测，确认准确后可删除
-%            a = input(' 1.press any key ');             %用于错误检测，确认准确后可删除
            [fval , frank]=sort(minval(fusers));
-%            fval             %用于错误检测，确认准确后可删除
-%            frank             %用于错误检测，确认准确后可删除
-%            a = input(' 2.press any key ');             %用于错误检测，确认准确后可删除
-%            fprintf('femtoquota(wanted_BS) ):%g\t,quota:%g\n',femtoquota(wanted_BS),quota )             %用于错误检测，确认准确后可删除
            max_dis_user_id = fusers(frank( quota ) );
-%            max_dis_user_id             %用于错误检测，确认准确后可删除
-%            a = input(' 3.press any key ');             %用于错误检测，确认准确后可删除
            
            if dis( wanted_BS,max_dis_user_id ) < minval( moved_point(i) ) %第一志愿不满足
                dis(wanted_BS,moved_point(i))=inf;
                asscount = asscount + 1;
-%                fprintf('college:user %g change its target next iteration\n',moved_point(i))
                continue
            else %第一志愿满足，即大于原前quota的第quota名
-%                fprintf('college:%g was kicked out from BS %g (%g)\n',max_dis_user_id,assignment( max_dis_user_id ),dis(assignment( max_dis_user_id ),max_dis_user_id) ); %%%%%%%%%%%  should print %%
-%                fprintf('college:user %g assign to BS %g (%g)\n',moved_point(i),wanted_BS,dis(wanted_BS,moved_point(i)));
-%                assignment( moved_point(i) )             %用于错误检测，确认准确后可删除
                assignment( moved_point(i) ) = assignment( max_dis_user_id );
-%                assignment( moved_point(i) )             %用于错误检测，确认准确后可删除
                assignment( max_dis_user_id ) = 0;
-%                assignment( max_dis_user_id )             %用于错误检测，确认准确后可删除
-%                a = input(' 4.press any key ');             %用于错误检测，确认准确后可删除
                push_out = [push_out i];
                new_in = [new_in max_dis_user_id];
-%                push_out             %用于错误检测，确认准确后可删除
-%                new_in             %用于错误检测，确认准确后可删除
-%                a = input(' 5.press any key ');             %用于错误检测，确认准确后可删除
-
-%                if iteration ~= 1
-%                    cascade_tmp_test = cascade_tmp_test +1; %这样算，错误在于把最终被踢出的用户也算进去了
-%                    fprintf('college:cascade_tmp_test ++   cascade_tmp_test=%g\n',cascade_tmp_test);
-%                end
-
-%                fprintf('college:assignment(%g) = %g \n', moved_point(i) , wanted_BS ); %%%%%%%%%%%  should print %%
-               
            end
        end
     end
@@ -129,8 +92,6 @@ while(asscount>0)
 
 end
 
-
-%lost=sum( min(dis,[],1)>radius );
 lost=sum(assignment==0);
 
 
@@ -141,17 +102,12 @@ chains = 0;
 for ii=1:length(candidate)
     BS_tmp = assignment(candidate(ii));
     if old_femtoquota(BS_tmp) >= quota
-%         fprintf('%g starts a chain\n',candidate(ii))
         chains = chains +1;
     else
-%         old_femtoquota( assignment(candidate(ii)) )                                                    %%% 用于debug %%%
-%         fprintf('old_femtoquota(%g) = %g\n',BS_tmp,old_femtoquota(ii))                                 %%% 用于debug %%%
         old_femtoquota(BS_tmp) = old_femtoquota(BS_tmp) +1;
     end
 end
 
 cascade = length(setdiff(find((assignment~=assign_topo)==1),old_moved_p ));
-
-% fprintf('college:iteration:%g,\tlost:%g,\tcascade:%g,\tchains:%g\n\n\n',iteration,lost,cascade,chains);
 
 end

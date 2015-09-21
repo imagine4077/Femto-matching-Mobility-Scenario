@@ -7,7 +7,6 @@ epsilon=1e-5;
 disind=(dis<=radius); %disind是个大小和dis一样的矩阵，dis小于等于radius的位置，disind的对应位置为1
 dis=dis.*disind+1./(disind)-1; %"."表示元素群运算。参加<基本语法>P4
 rate=getrate(dis,radius)+epsilon; %epsilon 是什么 ？
-% rate %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 lograte=log2(rate)-log2(epsilon);%-w*log2((f2uratio-1)^(f2uratio-1)/f2uratio^f2uratio);
 
 cost=0;
@@ -27,8 +26,7 @@ while(change==1)
     change=0;
     iteration=iteration+1;
     
-    cost(iteration)=sum(assignment~=0);     %变量加括号，表示取数值下标对应的元素???????????????????????????
-    %sum(curprice)
+    cost(iteration)=sum(assignment~=0);
     if iteration>maxiter
         break;
     end
@@ -40,9 +38,6 @@ while(change==1)
         if(assignment(i)~=0)
             continue;
         end
-%         curprice
-%         fprintf('round %g',iteration)
-%         pause(3)
         margin=lograte(:,i)-curprice;
         [ maxmargin requestbs(i)]=max(margin);
         if(maxmargin<=0)
@@ -54,16 +49,8 @@ while(change==1)
 
         [secondmargin id ]=max(margin);
         bid(i)=maxmargin-secondmargin;
-%         if(i==69)
-%              bid(i)
-%              requestbs(i)
-%              
-%              rate(requestbs(i),i)
-%         end
         if(bid(i)<=1e-2)
-              %fprintf(1,'bid=0 user %d, %d:%g ,%d: %g\n',i,requestbs(i),maxmargin,id,secondmargin);
               bid(i)=0.5;%rand(1,1);
-              %requestbs(i)=0;
         end
         if(bid(i)<0)
             bid(i)=0;
@@ -77,11 +64,6 @@ while(change==1)
         end
     end
     
-
-    %requestbs'
-    %bid'
-    %curprice
-    %priceid
     %femto get bids
     for i=1:numfemto
         requestid=find(requestbs==i);
@@ -91,14 +73,8 @@ while(change==1)
         [maxbid uid]=max(bid(requestid));
         winuser=requestid(uid);
         if(maxbid==0)
-            %fprintf('bid=0, femto=%d, user=%d, previous=%d\n',i,winuser,reserve(i,priceid(i)));
             maxbid=1;
-            %priceid(i)
         end
-%         if(i==68)
-%               winuser
-%                 requestbs(69)
-%         end
         assignment(winuser)=i;
         if(reserve(i,priceid(i))~=0) %assigned
             assignment(reserve(i,priceid(i)))=0;
@@ -106,12 +82,8 @@ while(change==1)
         reserve(i,priceid(i))=winuser;
         price(i,priceid(i))=price(i,priceid(i))+maxbid;
         [curprice(i) priceid(i)]=min(price(i,:));%give the smallest price
-        %maxbid
         change=1;
     end
 end
-%cost=curprice;
 lost=length(find(assignment==0));
-% iteration
-% pause(600) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end
